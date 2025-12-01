@@ -1,4 +1,3 @@
-{{-- Updated background colors and improved spacing --}}
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
@@ -8,28 +7,25 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
-        <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
-    <body class="font-sans antialiased">
-        <div class="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <!-- Using clean dark mode without excessive effects -->
+    <body class="font-sans antialiased dark bg-slate-950 text-slate-100 min-h-screen">
+        <div class="min-h-screen bg-slate-950">
             @include('layouts.navigation')
 
-            <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700">
+                <header class="bg-slate-900 border-b border-slate-800">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
                 </header>
             @endisset
 
-            <!-- Page Content -->
-            <main class="py-8">
+            <main class="py-12">
                 {{ $slot }}
             </main>
         </div>

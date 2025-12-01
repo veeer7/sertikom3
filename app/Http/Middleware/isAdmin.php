@@ -4,21 +4,41 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class isAdmin
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $cekuser = Auth::user();
-        if($cekuser->role == 'admin'){
-            abort(403, 'You are not allowed to access this page');
+        $user = auth()->user();   
+
+        // Kalo belum login -> tolak
+        if (!$user) {
+            abort(403, 'Forbidden');
+        }
+
+        // ADMIN bebas akses apa aja
+        if ($user->role == 'admin') {
+            return $next($request);
+        }
+
+        // GURU cuma boleh tolak route tertentu:
+        if ($user->role == 'guru') {
+            // misal user-management
+            if ($request->is('user-management*')) {
+                abort(403, 'Forbidden');
+            }
+
+            // selain user-management boleh
+            return $next($request);
+        }
+
+        // SISWA dilarang total
+        if ($user->role == 'siswa') {
+            abort(403, 'Forbidden');
         }
 
         return $next($request);
