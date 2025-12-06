@@ -1,27 +1,5 @@
 <x-app-layout>
-    <x-slot name="header">
-        <div class="space-y-2">
-            <div class="flex items-center gap-3">
-                <div class="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                </div>
-                <div>
-                    <h2 class="text-4xl font-bold text-white tracking-tight">
-                        Dashboard
-                    </h2>
-                    <p class="text-slate-400 text-sm flex items-center gap-2 mt-1">
-                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
-                        </svg>
-                        Selamat datang, <span class="text-white font-semibold">{{ Auth::user()->name }}</span>
-                    </p>
-                </div>
-            </div>
-        </div>
-    </x-slot>
+   
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
         

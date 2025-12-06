@@ -6,6 +6,7 @@ use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\Jurusan;
 use App\Models\TahunAjar;
+use App\Models\RiwayatKelas;
 use Illuminate\Http\Request;
 
 class SiswaController extends Controller
@@ -50,7 +51,7 @@ class SiswaController extends Controller
             'alamat' => 'required',
         ]);
 
-        Siswa::create([
+        $siswa = Siswa::create([
             'nama_lengkap' => $request->nama_lengkap,
             'nisn' => $request->nisn,
             'kelas_id' => $request->kelas_id,
@@ -61,7 +62,15 @@ class SiswaController extends Controller
             'alamat' => $request->alamat,
         ]);
 
-    return redirect()->route('siswa.index')->with('success', 'Siswa berhasil ditambahkan!');
+        // Buat riwayat kelas pertama kali
+        RiwayatKelas::create([
+            'siswa_id' => $siswa->id,
+            'kelas_id' => $request->kelas_id,
+            'tahun_ajar_id' => $request->tahun_ajar_id,
+            'is_active' => true
+        ]);
+
+        return redirect()->route('siswa.index')->with('success', 'Siswa berhasil ditambahkan!');
     }
 
 
@@ -72,11 +81,17 @@ class SiswaController extends Controller
     {
         $siswa = Siswa::with(['kelas', 'jurusan', 'tahunAjar'])->findOrFail($id);
 
-        $kelas = Kelas::orderBy('level_kelas')->get();
+        $kelas = Kelas::with('jurusan')->orderBy('level_kelas')->get();
 
         $kelasSekarang = $siswa->kelas;
 
-        return view('siswa.show', compact('siswa', 'kelas', 'kelasSekarang'));
+        // Get riwayat kelas
+        $riwayatKelas = RiwayatKelas::with(['kelas.jurusan', 'tahunAjar'])
+            ->where('siswa_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('siswa.show', compact('siswa', 'kelas', 'kelasSekarang', 'riwayatKelas'));
     }
 
 
@@ -131,15 +146,23 @@ class SiswaController extends Controller
             'kelas_baru' => 'required|exists:kelas,id',
         ]);
 
+        // Set semua riwayat kelas lama menjadi non-aktif
+        RiwayatKelas::where('siswa_id', $id)
+            ->update(['is_active' => false]);
+
         // Update kelas siswa
         $siswa->update([
             'kelas_id' => $request->kelas_baru
         ]);
 
-        return redirect()->route('siswa.index', $id)->with('success', 'Kelas siswa berhasil diubah!');
-    
+        // Buat riwayat kelas baru dengan status aktif
+        RiwayatKelas::create([
+            'siswa_id' => $id,
+            'kelas_id' => $request->kelas_baru,
+            'tahun_ajar_id' => $siswa->tahun_ajar_id,
+            'is_active' => true
+        ]);
 
+        return redirect()->route('siswa.show', $id)->with('success', 'Siswa berhasil naik kelas!');
     }
-
-
 }
